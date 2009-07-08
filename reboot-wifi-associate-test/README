@@ -1,0 +1,8 @@
+Simple soak test script to measure time to associate with an access point.
+After association the script reboots the machine and repeats the test.
+
+Data is logged in /root/wifi-log.txt
+
+Execute this script in the background from /etc/rc.local
+
+To stop the test, escape into grub and change kernel boot line to init=/bin/bash and when you get a shell prompt remove the script from /etc/rc.local then sync and reboot. Crude, but it works!
