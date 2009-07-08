@@ -1,0 +1,22 @@
+network.sh
+
+Tool for measuring network throughput on a specified network interface. Used for
+benchmarking wifi, ethernet, etc..
+
+To run, start transferring data through the interface, then run this script. Pressing
+^C will complete the test and calculate the average throughput.
+
+Syntax:
+
+./network.sh [ interface ] [ logfile ]
+
+where: 
+	interface is the interface to be benchmarked, e.g. eth0, wlan0, etc
+	default is wlan0
+
+	logfile is the name of the log. Default is the interface name with .log suffix,
+	e.g. wlan0.log
+
+(C) Canonical 2009
+
+Written by Colin Ian King
