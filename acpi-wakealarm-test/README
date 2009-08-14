@@ -1,0 +1,1 @@
+This script tests if the ACPI wakealarm mechanism can trigger a wakeup. The wakealarm.sh script must be run using sudo.
