@@ -17,6 +17,14 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 
+if [ x`whoami` != "xroot" ]; then
+  echo "Need to run with sudo!"
+  exit 1
+fi
+if [ ! -e /sys/class/rtc/rtc0/wakealarm ]; then
+  echo "Your don't seem to have the /sys/class/rtc/rtc0/wakealarm interface"
+  exit 1
+fi
 #
 # Author Colin Ian King,  colin.king@canonical.com
 #
@@ -24,25 +32,15 @@ SLEEP_SECS=5
 SLEEP_MAX=70
 SLEEP_DELTA=20
 
+diff=$((`date '+%s'`-`cat /sys/class/rtc/rtc0/since_epoch`))
+echo "There are $diff seconds difference between date and epoch"
+
 while [ $SLEEP_SECS -lt $SLEEP_MAX ]
 do
-  echo -n "ACPI alarm test: alarm in $SLEEP_SECS seconds time: "
-  if [ -e /proc/acpi/alarm ]; then
-    # old style alarm interface
-    echo "(Using /proc/acpi/alarm)"
-    DATE=`date "+%F %H:%M:%S" -d "$SLEEP_SECS sec"`
-    echo $DATE > /proc/acpi/alarm
-  elif [ -e /sys/class/rtc/rtc0/wakealarm ]; then
-    # new style alarm interface
-    echo "(Using /sys/class/rtc/rtc0/wakealarm)"
-    SECS=`date "+%s" -d "$SLEEP_SECS sec"`
-    echo 0 > /sys/class/rtc/rtc0/wakealarm
-    echo $SECS > /sys/class/rtc/rtc0/wakealarm
-  else
-    echo "Don't know how to set alarm"
-    exit 1
-  fi
-
+  echo "ACPI alarm test: alarm in $SLEEP_SECS seconds time: "
+  SECS=$((`cat /sys/class/rtc/rtc0/since_epoch`+$SLEEP_SECS))
+  echo 0 > /sys/class/rtc/rtc0/wakealarm
+  echo $SECS > /sys/class/rtc/rtc0/wakealarm
 #
 # Test 1 - test if the alarm is triggered and ready to fire
 #
