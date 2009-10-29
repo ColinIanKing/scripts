@@ -54,7 +54,7 @@ blkparse -i $1 | awk '
 cat <<EOF | gnuplot
 set output "$graphfile"
 set terminal png transparent font "arial" 8
-set title "Read Rate during Boot"
+set title "Read Rate"
 set xlabel "Time (Seconds)"
 set ylabel "Data Rate (MB/S)"
 set xrange [0:]
