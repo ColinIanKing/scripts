@@ -1,0 +1,2 @@
+Syntax: generate-read-graphs blktracefile [points-per-sec]
+e.g.    generate-read-graphs example.blktrace. 0.25
