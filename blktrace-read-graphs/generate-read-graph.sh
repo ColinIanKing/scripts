@@ -23,34 +23,45 @@ graphfile=graph-reads.png
 #
 #
 tmpfile=/tmp/parsed.log.$$
+tmpfileavg=/tmp/parsed.log.avg.$$
 blkparse -i $1 | awk '
 { 
-	if ($6 == "D") {
-     		if (index($7,"R")>0) {
-			i=sprintf("%s.%s",$8,$10)
-			starttime[i]=$4
-		}
-	}
 	if ($6 == "C") {
      		if (index($7,"R")>0) {
-			i=sprintf("%s.%s",$8,$10)
 			blks=$10
-			endtime=$4
-			deltatime=endtime-starttime[i]
-     			print (endtime+starttime[i])/2 "\t" $8 "\t " $10 "\t" ((blks / deltatime) * 512)/(1024*1024) 
+     			print $4 "\t" $10 
 		}
 	}
 }' | awk -v delta=$points_per_sec '
 { 
      	time=$1;
-	total += $3
+	total += $2
      	if (time > (start + delta)) {
-     		print time-(delta/2) "\t" 0 "\t " 0 "\t" ((total*512)/(1024*1024)) / delta
+		if (delta > 0) 
+     			print time-(delta/2) "\t" 0 "\t " 0 "\t" ((total * 512) / delta)/(1024 * 1024)
 		start=time
 		total=0
 	}
 }
 ' > $tmpfile
+
+blkparse -i $1 | awk '
+{ 
+	if ($6 == "C") {
+     		if (index($7,"R")>0) {
+			time=$4
+			total += $10
+		}
+	}
+}
+END { 
+	average=((total * 512) / time)/(1024 * 1024); 
+	print 0, average
+	print time, average
+}
+' > $tmpfileavg
+
+
 cat <<EOF | gnuplot
 set output "$graphfile"
 set terminal png transparent font "arial" 8
@@ -59,7 +70,9 @@ set xlabel "Time (Seconds)"
 set ylabel "Data Rate (MB/S)"
 set xrange [0:]
 set yrange [0:]
-plot '$tmpfile' using 1:4 with lines title "Read Rate"
+plot '$tmpfile' using 1:4 with lines title "Read Rate", \
+     '$tmpfileavg' using 1:2 with lines title "Average Rate"
 EOF
 rm $tmpfile
+rm $tmpfileavg
 echo Generated graph: $graphfile
