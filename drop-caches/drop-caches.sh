@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright (C) 2009 Canonical
+# Copyright (C) 2009-2012 Canonical
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
