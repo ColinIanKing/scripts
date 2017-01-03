@@ -27,7 +27,7 @@ do
 	do
 		echo Load: $G $L
 		powerstat -R 1 60 > $G-$L.log &
-		stress-ng -k -v --metrics-brief --tz --times --cpu 0 --cpu-method matrixprod --cpu-load $L --cpu-load-slice 2500 -t 60 i> $G-$L-stress.log
+		stress-ng -k -v --metrics-brief --tz --times --cpu 0 --cpu-method matrixprod --cpu-load $L --cpu-load-slice 2500 -t 60 > $G-$L-stress.log
 		killall -14 stress-ng
 		sleep 5
 	done
